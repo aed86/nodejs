@@ -1,0 +1,14 @@
+extends layout
+block content
+   h1= title
+   form#formAddCarrier(name="add_carrier", method="post", action="/add_carrier")
+      div.form-group
+         input.form-control(type="text", placeholder="Название", name="name", required)
+      div.form-group
+         input.form-control(type="text", placeholder="Описание", name="description", required)
+      div.form-group
+         input.form-control(type="text", placeholder="Город", name="city", required)
+      div.form-group
+         button.btn.btn-primary(type="submit") Добавить
+         a.btn.btn-default(href="/carriers") Назад
+

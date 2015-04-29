@@ -1,0 +1,12 @@
+extends layout
+block content
+   h1= title
+   form#formAddClaim(name="addclaim",method="post",action="/addclaim")
+      div.form-group
+         input.form-control(type="text", placeholder="name", name="name")
+      div.form-group
+         input.form-control(type="text", placeholder="description", name="description")
+      div.form-group
+         button.btn.btn-primary(type="submit") Добавить
+         a.btn.btn-default(href="/claims") Назад
+

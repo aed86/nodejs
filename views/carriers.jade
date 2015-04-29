@@ -1,0 +1,30 @@
+extends layout
+block content
+    h1 Перевозчики
+    p Страница перевозчиков
+    div
+        div
+            div.above-table
+                span.bold Всего перевозчиков:
+                    =' '
+                    = carrierList.length
+                span
+                    a.btn.btn-default(href='/add_carrier', role="button") Добавить перевозчика
+            table.table.table-striped
+                tr
+                    th
+                    th Название
+                    th Описание
+                    th Город
+                    th Дата добавления
+                    th
+
+                each val, index in carrierList
+                    tr
+                        td= val.name
+                        td= val.description
+                        td= val.city
+                        td= val.created
+                        td
+                            a.btn.btn-primary.btn-xs.removeItem&attributes({"data-item": "carrier", "data-id": val._id
+                                    .toString()}) Удалить

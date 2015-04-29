@@ -1,0 +1,42 @@
+extends layout
+block content
+    h1 Заявки
+    p Страница заявок
+    div
+        div
+            div.above-table
+                span.bold Всего заявок:
+                    =' '
+                    = claimList.length
+                span
+                    a.btn.btn-default(href='/addclaim', role="button") Добавить заявку
+            table.table.table-striped
+                tr
+                    th Название
+                    th Перевозчик
+                    th №
+                    th Дата
+                    th Клиент
+                    th №
+                    th Дата
+                    th Поставщик
+                    th Город
+                    th
+
+                each val, index in claimList
+                    tr
+                        td= val.name
+                        td
+                            select
+                                each carrier in carrierList
+                                    option(value=carrier._id)= carrier.name
+                        td= ''
+                        td= val.created
+                        td= ''
+                        td= ''
+                        td= ''
+                        td= ''
+                        td= ''
+                        td
+                            a.btn.btn-primary.btn-xs.removeItem&attributes({'data-id': val._id.toString(),
+                                'data-item': 'claim'}) Удалить
