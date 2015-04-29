@@ -1,5 +1,5 @@
 {
-  "port" : 3000,
+  "port": 3000,
   "mongoose": {
     "uri": "mongodb://localhost/nodejs",
     "options": {
@@ -9,5 +9,13 @@
         }
       }
     }
+  },
+  "session": {
+    "secret": "THISISSECRET",
+    "maxAge": "",
+    "resave": true,
+    "proxy": true,
+    "cookie-name": "sid"
   }
+
 }
