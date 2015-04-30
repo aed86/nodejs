@@ -64,11 +64,11 @@ schema.statics.authorize = function (username, password, callback) {
     var UserModel = this;
     async.waterfall([
         function (callback) {
-            UserModel.findOne({username: req.body.username}).exec(callback);
+            UserModel.findOne({username: username}).exec(callback);
         },
         function (user, callback) {
             if (user) {
-                if (user.checkPassword(req.body.password)) {
+                if (user.checkPassword(password)) {
                     callback(null, user);
                 } else {
                     res.send(403, '');
