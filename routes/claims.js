@@ -6,21 +6,23 @@ var CarrierModel = require('../models/carriers').CarrierModel;
 var log = require('../libs/log')(module);
 var ObjectID = require('mongodb').ObjectID;
 var async = require('async');
+var checkAuth = require('../middleware/checkAuth');
+
 
 //mount routes
-router.get('/claims', function (req, res) {
+router.get('/claims', checkAuth, function (req, res) {
     //var carriers = CarrierModel.find();
 
     async.parallel([
-            function(callback) {
+            function (callback) {
                 ClaimModel.find(callback);
             },
-            function(callback) {
+            function (callback) {
                 CarrierModel.find(callback)
             }
         ],
         // result
-        function(err, results) {
+        function (err, results) {
             if (err) next(err);
             res.render('claims', {
                 claimList: results[0],
@@ -30,14 +32,14 @@ router.get('/claims', function (req, res) {
     );
 });
 
-router.get('/addclaim', function (req, res) {
+router.get('/addclaim', checkAuth, function (req, res) {
 
     res.render('add_claim', {
         title: 'Добавить заявку'
     });
 });
 
-router.post('/addclaim', function (req, res) {
+router.post('/addclaim', checkAuth, function (req, res) {
     var claim = new ClaimModel({
         name: req.body.name,
         description: req.body.description
@@ -54,7 +56,7 @@ router.post('/addclaim', function (req, res) {
     });
 });
 
-router.delete('/claim/:id', function (req, res, next) {
+router.delete('/claim/:id', checkAuth, function (req, res, next) {
     try {
         var id = new ObjectID(req.params.id);
     } catch (e) {

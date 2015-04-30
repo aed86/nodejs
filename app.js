@@ -11,6 +11,7 @@ var config = require('./libs/config');
 var errorHandler = require('errorhandler');
 var HttpError = require("./error/index").HttpError;
 var mongoose = require('mongoose');
+var _ = require('underscore');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,7 +23,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB session store
 var session = require('express-session');
@@ -34,20 +34,22 @@ var sessionConfig = {
     cookie: {
         path: "/",
         maxAge: config.get('session:maxAge'), // 4h max inactivity for session
-        httpOnly: true // hide from attackers
+        httpOnly: true, // hide from attackers
+        secure: false
     },
     key: "sid",
-    name: config.get('session:cookie-name'),
+    name: config.get('session:name'),
     proxy: config.get('session:proxy'),
     resave: config.get('session:resave'),
     saveUninitialized: true,
     // take connection settings from mongoose
     store: new MongoStore({mongooseConnection: mongoose.connection})
 };
-
 app.use(session(sessionConfig));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(require('./middleware/sendHttpError'));
+app.use(require('./middleware/loadUser'));
 
 // set view locals
 app.use(function (req, res, next) {
@@ -65,36 +67,46 @@ app.use(function (req, res, next) {
         {
             url: '/carriers',
             title: 'Перевозчики'
-        },
-        {
-            url: '/logout',
-            title: 'Выйти'
-        },
-        {
-            url: '/login',
-            title: 'Войти'
-        },
-        {
-            url: '/register',
-            title: 'Регистрация'
         }
     ];
-    next()
-});
 
-// Make our db accessible to our router
-app.use(function (req, res, next) {
-    //req.db = mongoose.connection;
-    next();
+    if (req.user) {
+        app.locals.topMenu = app.locals.topMenu.concat([{
+            url: '/logout',
+            title: 'Выйти',
+            id: 'logoutBtn'
+        }]);
+    } else {
+        app.locals.topMenu = app.locals.topMenu.concat([
+            {
+                url: '/login',
+                title: 'Войти'
+            },
+            {
+                url: '/register',
+                title: 'Регистрация'
+            }
+        ]);
+    }
+    next()
 });
 
 app.use(require('./routes/home'));
 app.use(require('./routes/claims'));
 app.use(require('./routes/carriers'));
 app.use(require('./routes/login'));
+app.use(require('./routes/logout'));
 app.use(require('./routes/register'));
 
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    log.debug('Try catch 404 error');
+    next(404);
+});
+
 app.use(function (err, req, res, next) {
+    log.error(err);
+
     if (typeof err == 'number') { // next(404)
         err = new HttpError(err);
     }
@@ -105,18 +117,10 @@ app.use(function (err, req, res, next) {
         if (app.get('env') == 'development') {
             errorHandler()(err, req, res, next);
         } else {
-            log.error(err);
             err = new HttpError(500);
             res.sendHttpError(err);
         }
     }
-});
-
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
 });
 
 // error handlers

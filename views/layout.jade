@@ -8,6 +8,7 @@ html
         script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')
         script(src='js/common.js')
         script(src='js/login.js')
+        script(src='js/logout.js')
         script(src='js/register.js')
     body
         div.navbar.navbar-default.navbar-fixed-top
@@ -15,7 +16,7 @@ html
                 ul.nav.navbar-nav
                     each menuItem in topMenu
                         li(class=route == menuItem.url ? 'active' : '')
-                            a(href=menuItem.url)= menuItem.title
+                            a(href=menuItem.url, id=menuItem.id)= menuItem.title
 
         div.container
             block content

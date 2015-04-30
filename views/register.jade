@@ -1,13 +1,24 @@
 extends layout
 block content
     h1= title
-    form(name="register-form", id="register_form", method="post", action="/register")
+    form.form-horizontal(name="register-form", id="register_form", method="post", action="/register")
         div.form-group
-            input.form-control(type="text", placeholder="Имя", name="name")
+            label.col-sm-2.control-label(for='name') Имя
+            div.col-sm-10
+                input#name.form-control(type="text", placeholder="Имя", name="name")
         div.form-group
-            input.form-control(type="text", placeholder="Логин", name="username")
+            label.col-sm-2.control-label(for='name') Логин
+            div.col-sm-10
+                input.form-control(type="text", placeholder="Логин", name="username")
         div.form-group
-            input.form-control(type="password", placeholder="Пароль", name="password")
+            label.col-sm-2.control-label(for='name') Пароль
+            div.col-sm-10
+                input.form-control(type="password", placeholder="Пароль", name="password")
         div.form-group
-            button.btn.btn-primary(type="submit") Войти
-            spah.help-block.error
+            label.col-sm-2.control-label(for='name') Подтверждение пароля
+            div.col-sm-10
+                input.form-control(type="password", placeholder="Подтверждение пароля", name="passwordconfirm")
+        div.form-group
+            div.col-sm-offset-2.col-sm-10
+                spah.help-block.error
+                button.btn.btn-primary(type="submit") Войти

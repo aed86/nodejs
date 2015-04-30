@@ -16,7 +16,7 @@
                 if (res.success) {
                     form.html('Вы вошли на сайт').addClass('alert-success');
                     $('.error', form).button('');
-                    //window.location.href= '/';
+                    window.location.href= '/';
                 } else {
                     var error = res.message;
                     $(".error", form).html(error);

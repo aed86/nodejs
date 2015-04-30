@@ -6,7 +6,7 @@ var log = require('../libs/log')(module);
 var ObjectID = require('mongodb').ObjectID;
 var async = require('async');
 var AuthError = require('../models/users').AuthError;
-var HttpError = require('../error/index').HttpError
+var HttpError = require('../error/index').HttpError;
 
 router.get('/login', function (req, res) {
     res.render('login', {
@@ -27,7 +27,7 @@ router.post('/login', function (req, res, next) {
             }
         }
 
-        res.session.user = user._id;
+        req.session.user = user.id;
         res.json({
             success: true
         });

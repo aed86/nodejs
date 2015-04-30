@@ -12,10 +12,10 @@
   },
   "session": {
     "secret": "THISISSECRET",
-    "maxAge": "",
-    "resave": true,
-    "proxy": true,
-    "cookie-name": "sid"
+    "maxAge": null,
+    "resave": false,
+    "proxy": false,
+    "name": "sid"
   }
 
 }

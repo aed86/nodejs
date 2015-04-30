@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var async = require('async');
 var util = require('util');
+var HttpError = require('../error/index').HttpError;
 
 var mongoose = require('../libs/mongoose'),
     Schema = mongoose.Schema;
@@ -71,7 +72,6 @@ schema.statics.authorize = function (username, password, callback) {
                 if (user.checkPassword(password)) {
                     callback(null, user);
                 } else {
-                    res.send(403, '');
                     callback(new AuthError('Логин или пароль неверен.'))
                 }
             } else {
@@ -79,6 +79,35 @@ schema.statics.authorize = function (username, password, callback) {
             }
         }
     ], callback);
+};
+
+schema.statics.registration = function (userinfo, callback) {
+
+    var UserModel = this;
+    async.waterfall([
+        function (callback) {
+            UserModel.findOne({
+                username: userinfo.username
+            }).exec(callback);
+        },
+        function(user, callback) {
+            if (user) {
+                callback(new RegError('Такой логин уже занят'));
+            } else {
+                //Save new user
+                user = new UserModel({
+                    username: userinfo.username,
+                    password: userinfo.password,
+                    name: userinfo.name
+                });
+
+                user.save(function(err, user, affected) {
+                   callback(err, user);
+                });
+            }
+        }
+    ], callback);
+
 };
 
 exports.UserModel = mongoose.model('User', schema);
@@ -96,3 +125,17 @@ util.inherits(AuthError, Error);
 AuthError.prototype.name = 'AuthError';
 
 exports.AuthError = AuthError;
+
+// Ошибка Регистрации
+function RegError(message) {
+    Error.apply(this, arguments);
+    Error.captureStackTrace(this, HttpError);
+
+    this.message = message;
+}
+
+util.inherits(RegError, Error);
+
+RegError.prototype.name = 'RegError';
+
+exports.RegError = RegError;
