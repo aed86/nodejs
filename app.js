@@ -49,6 +49,7 @@ app.use(session(sessionConfig));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(require('./middleware/sendHttpError'));
+app.use(require('./middleware/sendValidationError'));
 app.use(require('./middleware/loadUser'));
 
 // set view locals
@@ -70,14 +71,15 @@ app.use(function (req, res, next) {
         }
     ];
 
+    app.locals.rightMenu = [];
     if (req.user) {
-        app.locals.topMenu = app.locals.topMenu.concat([{
+        app.locals.rightMenu = app.locals.rightMenu.concat([{
             url: '/logout',
             title: 'Выйти',
             id: 'logoutBtn'
         }]);
     } else {
-        app.locals.topMenu = app.locals.topMenu.concat([
+        app.locals.rightMenu = app.locals.rightMenu.concat([
             {
                 url: '/login',
                 title: 'Войти'
@@ -111,7 +113,9 @@ app.use(function (err, req, res, next) {
         err = new HttpError(err);
     }
 
-    if (err instanceof HttpError) {
+    if (err.name == 'ValidationError') {
+        res.sendValidationError(err);
+    } else if (err instanceof HttpError) {
         res.sendHttpError(err);
     } else {
         if (app.get('env') == 'development') {

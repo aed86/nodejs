@@ -2,7 +2,8 @@
     $(document).on('submit', '#register_form',  function () {
         var form = $(this);
 
-        $('.error', form).button('loading');
+        $(".help-inline").html('');
+        form.find('.has-error').removeClass('has-error');
 
         $.ajax({
             url: "/register",
@@ -18,12 +19,25 @@
                     $('.error', form).button('');
                     window.location.href= '/';
                 } else {
-                    var error = res.message;
-                    $(".error", form).html(error);
+                    if (_.isObject(res.message)) {
+                        for (var key in res.message) {
+                            var $div = $("[name='"+ key +"']").closest('div');
+                            $div.find('.help-inline').html(res.message[key].message);
+                            $div.addClass('has-error');
+                        }
+                    } else {
+                        $('.error').html(res.message);
+                    }
                 }
             }
         });
 
         return false;
     });
+
+    $(document).on('keyup', '#register_form',  function () {
+        $(this).find('.has-error').removeClass('has-error');
+    });
+
+
 })(jQuery);

@@ -5,6 +5,7 @@ html
         link(rel='stylesheet', href='/css/style.css')
         link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
         script(src='/vendor/bower_components/jquery/dist/jquery.min.js')
+        script(src='/vendor/bower_components/underscore/underscore-min.js')
         script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')
         script(src='js/common.js')
         script(src='js/login.js')
@@ -18,5 +19,9 @@ html
                         li(class=route == menuItem.url ? 'active' : '')
                             a(href=menuItem.url, id=menuItem.id)= menuItem.title
 
+                ul.nav.navbar-nav.navbar-right
+                    each menuItem in rightMenu
+                        li
+                            a(href=menuItem.url, id=menuItem.id)= menuItem.title
         div.container
             block content
