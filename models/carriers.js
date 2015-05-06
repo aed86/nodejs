@@ -1,3 +1,8 @@
+/**
+ * Модель перевозчиков
+ * @type {mongoose|exports|module.exports}
+ */
+
 var mongoose = require('../libs/mongoose'),
     Schema = mongoose.Schema;
 

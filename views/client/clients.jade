@@ -1,0 +1,28 @@
+extends ../layout
+block content
+    h1 Клиенты
+    div
+        div
+            div.above-table
+                span.bold Всего клиентов:
+                    =' '
+                    span#countInfo= clientList.length
+                span
+                    a.btn.btn-default(href='/addClient', role="button") Добавить клиента
+
+            table.table.table-striped
+                tr
+                    th Клиент
+                    th Кол-во заявок
+                    th Создан
+                    th
+
+                each val, index in clientList
+                    tr
+                        td
+                            a(href="/client/"+ val.id)= val.name
+                        td= val.claimsCount
+                        td= val.created
+                        td
+                            a.btn.btn-primary.btn-xs.removeItem&attributes({'data-id': val._id.toString(),
+                                'data-item': 'client'}) Удалить

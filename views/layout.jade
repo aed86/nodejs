@@ -1,6 +1,7 @@
 doctype html
 html
     head
+        base(href="/")
         title= title
         link(rel='stylesheet', href='/css/style.css')
         link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
@@ -24,4 +25,9 @@ html
                         li
                             a(href=menuItem.url, id=menuItem.id)= menuItem.title
         div.container
-            block content
+            if (flashMessage)
+                p#flashMessage.text-center.bg-info= flashMessage
+                script(type='text/javascript').
+                    showFlashMessage();
+
+    block content

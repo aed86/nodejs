@@ -62,6 +62,14 @@ app.use(function (req, res, next) {
             title: 'Home'
         },
         {
+            url: '/table',
+            title: 'Таблица'
+        },
+        {
+            url: 'clients',
+            title: 'Клиенты'
+        },
+        {
             url: '/claims',
             title: 'Заявки'
         },
@@ -90,6 +98,11 @@ app.use(function (req, res, next) {
             }
         ]);
     }
+
+    if (!req.session.flashMessage || !_.isArray(req.session.flashMessage)) {
+        req.session.flashMessage = [];
+    }
+
     next()
 });
 
@@ -99,6 +112,9 @@ app.use(require('./routes/carriers'));
 app.use(require('./routes/login'));
 app.use(require('./routes/logout'));
 app.use(require('./routes/register'));
+app.use(require('./routes/table'));
+app.use(require('./routes/clients'));
+app.use(require('./routes/providers'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

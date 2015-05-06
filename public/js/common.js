@@ -1,6 +1,6 @@
 (function ($) {
 
-    var types = ['claim', 'carrier'];
+    var types = ['claim', 'carrier', 'client'];
     /**
      * Удалить строку из таблицы
      */
@@ -26,9 +26,25 @@
             complete: function () {
                 $this.closest('tr').fadeOut(400, function() {
                     $(this).remove();
+                    var $countElm = $("#countInfo");
+                    if ($countElm.length) {
+                        var count = parseInt($countElm.text());
+                        $countElm.text(count - 1);
+                    }
                 });
             }
         });
     });
-
 })(jQuery);
+
+
+var showFlashMessage = function() {
+    var $flashMessage = $("#flashMessage");
+    if ($flashMessage.length) {
+        setTimeout(function() {
+            $flashMessage.fadeOut(400, function() {
+                $flashMessage.html('');
+            });
+        }, 3000)
+    }
+};

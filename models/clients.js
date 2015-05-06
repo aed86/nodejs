@@ -6,14 +6,16 @@
 var mongoose = require('../libs/mongoose'),
     Schema = mongoose.Schema;
 
-var schema = new Schema({
+var Client = new Schema({
     name: {
         type: String,
-        required: true
     },
     description: {
         type: String,
-        required: true
+    },
+    claimsCount: {
+        type: Number,
+        default: 0
     },
     created: {
         type: Date,
@@ -21,12 +23,12 @@ var schema = new Schema({
     }
 });
 
-schema.path('name').validate(function(v) {
+Client.path('name').validate(function(v) {
     return v.length > 0 && v.length< 70;
+}, 'Имя клиента должно быть от 0 до 70 символов');
+
+Client.path('description').validate(function(v) {
+    return v.length >= 0 && v.length< 270;
 });
 
-schema.path('description').validate(function(v) {
-    return v.length > 0 && v.length< 270;
-});
-
-exports.ClaimModel = mongoose.model('Claim', schema);
+exports.Client = mongoose.model('Client', Client);
