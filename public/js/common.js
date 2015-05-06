@@ -1,6 +1,6 @@
 (function ($) {
 
-    var types = ['claim', 'carrier', 'client'];
+    var types = ['claim', 'carrier', 'client', 'provider'];
     /**
      * Удалить строку из таблицы
      */
@@ -22,25 +22,32 @@
             data: data,
             method: 'DELETE',
             success: function (res) {
-            },
-            complete: function () {
-                $this.closest('tr').fadeOut(400, function() {
-                    $(this).remove();
-                    var $countElm = $("#countInfo");
-                    if ($countElm.length) {
-                        var count = parseInt($countElm.text());
-                        $countElm.text(count - 1);
-                    }
-                });
+                if (res.success) {
+                    $this.closest('tr').fadeOut(400, function() {
+                        $(this).remove();
+                        var $countElm = $("#countInfo");
+                        if ($countElm.length) {
+                            var count = parseInt($countElm.text());
+                            $countElm.text(count - 1);
+                        }
+                    });
+
+                    showFlashMessage(res.message);
+                } else {
+                    showFlashMessage(res.message);
+                }
             }
         });
     });
 })(jQuery);
 
 
-var showFlashMessage = function() {
+var showFlashMessage = function(message) {
     var $flashMessage = $("#flashMessage");
     if ($flashMessage.length) {
+        if (message) {
+            $flashMessage.html(message);
+        }
         setTimeout(function() {
             $flashMessage.fadeOut(400, function() {
                 $flashMessage.html('');

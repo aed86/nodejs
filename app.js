@@ -59,23 +59,39 @@ app.use(function (req, res, next) {
     app.locals.topMenu = [
         {
             url: '/',
-            title: 'Home'
+            title: 'Home',
+            active: '/home' == req.path
         },
         {
             url: '/table',
-            title: 'Таблица'
+            title: 'Таблица',
+            active: '/table' == req.path
         },
         {
-            url: 'clients',
-            title: 'Клиенты'
+            url: '/clients',
+            title: 'Клиенты',
+            active: '/clients' == req.path
         },
         {
             url: '/claims',
-            title: 'Заявки'
+            title: 'Заявки',
+            active: '/claims' == req.path
         },
         {
             url: '/carriers',
-            title: 'Перевозчики'
+            title: 'Перевозчики',
+            active: '/carriers' == req.path
+        }
+    ];
+
+    app.locals.UL = [
+        {
+            id: 0,
+            name: 'РустаБрокер'
+        },
+        {
+            id:1,
+            name: 'ИнтерЛогистик'
         }
     ];
 

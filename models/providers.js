@@ -13,6 +13,10 @@ var Provider = new Schema({
     city: {
         type: String,
     },
+    clientId: {
+        type: String,
+        required: true
+    },
     created: {
         type: Date,
         default: Date.now

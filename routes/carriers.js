@@ -8,12 +8,12 @@ var checkAuth = require('../middleware/checkAuth');
 
 //mount routes
 router.get('/carriers', checkAuth, function(req, res) {
-    CarrierModel.find(function(err, data) {
+    CarrierModel.find().sort({'created': 1}).exec(function(err, data) {
         if (err) {
             res.statusCode(200);
             log.debug('Error get carrier');
         } else {
-            res.render('carriers', {
+            res.render('carrier/carriers', {
                carrierList: data
             });
         }
@@ -21,7 +21,7 @@ router.get('/carriers', checkAuth, function(req, res) {
 });
 
 router.get('/add_carrier', checkAuth, function(req, res) {
-  res.render('add_carrier', {
+  res.render('carrier/addCarrier', {
     title: 'Добавить перевозчика'
   });
 });
@@ -56,8 +56,8 @@ router.delete('/carrier/:id', checkAuth, function(req, res, next) {
 
         if (!carrier) {
             res.json({
-                "message": "Record not found.",
-                "status": "error"
+                message: "Record not found.",
+                success: true
             });
             log.debug('Carrier with id ' + id + ' not found');
         } else {
@@ -65,8 +65,8 @@ router.delete('/carrier/:id', checkAuth, function(req, res, next) {
                 if (err) throw err;
 
                 res.json({
-                    "message": "Ok",
-                    "status": "success"
+                    message: "Перевозчик удален",
+                    success: true
                 });
             });
         }

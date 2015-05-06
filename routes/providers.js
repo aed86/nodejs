@@ -37,27 +37,37 @@ router.post('/client/:clientId/addProvider', checkAuth, function (req, res, next
             }
         });
     });
+});
 
+router.delete('/provider/:id', checkAuth, function (req, res, next) {
+    try {
+        var id = new ObjectID(req.params.id);
+        log.debug(id);
+    } catch (e) {
+        log.error(e.message);
+        return next(404);
+    }
 
-    //async.waterfall([
-    //        // Получаем клиента по clientId
-    //        function (callback) {
-    //            Client.findById(clientId).exec(callback);
-    //        },
-    //        // Проверяем, существует ли
-    //        function (client, callback) {
-    //            if (!client) {
-    //                next('Клиент не найден');
-    //            } else {
-    //            }
-    //        }
-    //    ],
-    //    function (err, result) {
-    //        if (err) {
-    //            return next(err);
-    //        }
-    //    }
-    //);
+    Provider.findById(id, function (err, provider) {
+        if (err) return next(err);
+
+        if (!provider) {
+            res.json({
+                "message": "Record not found.",
+                "success": true
+            });
+            log.debug('Client with id ' + id + ' not found');
+        } else {
+            provider.remove(function (err) {
+                if (err) throw err;
+
+                res.json({
+                    "message": "Поставщик удален",
+                    "success": true
+                });
+            });
+        }
+    });
 });
 
 module.exports = router;

@@ -3,7 +3,7 @@ block content
     h1= title
     div.col-md-6
         h3 Информация о клиенте
-        form#formAddClaim(name="editClient",method="post",action="/editClient")
+        form#formAddClaim(name="editClient",method="post",action="/client/#{client.id}/edit")
             div.form-group
                 input.form-control(type="text", placeholder="name", name="name", value='#{client.name}')
             div.form-group
@@ -11,7 +11,7 @@ block content
                 value='#{client.description}')
             div.form-group
                 button.btn.btn-primary(type="submit") Сохранить
-                a.btn.btn-default(href="/clients") Назад
+        a.btn.btn-default(href="/clients") Вернуться
     div.col-md-6
         h3 Поставщики
         form.form-inline(name="editClient",method="post",action="/client/#{client.id}/addProvider")
@@ -19,34 +19,40 @@ block content
             div.table-responsive
                 table.table.table-striped
                     tr
-                        th
                         th Поставщик
                         th Город
+                        th Создан
+                        th
 
                     if (providers)
                         each provider, index in providers
                             tr
                                 td
-                                    input(type='checkbox')
-                                td
                                     =provider.name
                                 td
                                     =provider.city
+                                td
+                                    =provider.created
+                                td
+                                    a.btn.btn-primary.btn-xs.removeItem&attributes({'data-id': provider.id.toString(),
+                                        'data-item': 'provider'}) Удалить
+
                     else
                         tr
-                            td(colspan='3')
+                            td(colspan='4')
                                 h6 Нет поставщиков
 
                     tr
-                        td(colspan='3')
+                        td(colspan='4')
                             br
                             h6 Добавить
                     tr
                         td
-                        td
                             input.form-control(type="text", placeholder="Название поставщика", name="name", value='')
                         td
                             input.form-control(type="text", placeholder="Город", name="city", value='')
+                        td(colspan='2')
+
                 div.form-group
                     button.btn.btn-primary(type="submit") Добавить
 
