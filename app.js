@@ -84,13 +84,13 @@ app.use(function (req, res, next) {
         }
     ];
 
-    app.locals.UL = [
+    app.locals.legalEntity = [
         {
-            id: 0,
+            id: 'rb',
             name: 'РустаБрокер'
         },
         {
-            id:1,
+            id: 'il',
             name: 'ИнтерЛогистик'
         }
     ];
