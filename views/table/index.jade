@@ -21,19 +21,37 @@ block content
                         th Город
                         th
 
-                    tr
-                        if (applications.length)
-                            td
-                            td
-                            td
-                            td
-                            td
-                            td
-                            td
-                            td
-                            td
-                            td
-                        else
+                    if (applications.length)
+                        each _app in applications
+                            tr
+
+                                td
+                                    //Юр лицо
+                                    span=_app.legalEntity
+                                td
+                                    // Имя перевозчика
+                                    span= _app.carrier.name
+                                td
+                                    //span= _app. // номер заявки перевозчика
+                                td
+                                    //span= _app.carrier. // дата заявки
+                                td
+                                    //Клиент
+                                    span= _app.client.name
+                                td
+                                    //span= _app. // номер заявки клиена
+                                td
+                                    //span= _app. // дата заявки
+                                td
+                                    // поставщик
+                                    span= _app.provider.name
+                                td
+                                    // город поставщика
+                                    span= _app.provider.city
+                                td
+                                    span
+                    else
+                        tr
                             td(colspan=10)= 'Нет записей'
 
                     //        Блок добавления новых заявок
@@ -45,7 +63,7 @@ block content
                         td
                             select.form-control(name='legalEntity')
                                 each val in legalEntity
-                                    option(value=val.id)= val.name
+                                    option(value=val.name)= val.name
                         td
                             select.form-control(name='carrier')
                                 each carrier in carriers
@@ -63,7 +81,7 @@ block content
                         td
                             span.form-control= new Date()
                         td
-                            select.form-control#provider
+                            select.form-control#provider(name='provider')
                         td
                             span.form-control#cityProvider
                         td

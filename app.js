@@ -115,8 +115,18 @@ app.use(function (req, res, next) {
         ]);
     }
 
+    console.log(req.session.flashMessage);
     if (!req.session.flashMessage || !_.isArray(req.session.flashMessage)) {
         req.session.flashMessage = [];
+    }
+
+    next()
+});
+
+// Флеш сообщения
+app.use(function(req, res, next) {
+    if (req.session.flashMessage.length > 0) {
+        app.locals.flashMessage = req.session.flashMessage.pop();
     }
 
     next()
