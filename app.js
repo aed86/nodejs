@@ -123,6 +123,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(require('./routes/home'));
+app.use(require('./routes/providers'));
 app.use(require('./routes/claims'));
 app.use(require('./routes/carriers'));
 app.use(require('./routes/login'));
@@ -130,11 +131,10 @@ app.use(require('./routes/logout'));
 app.use(require('./routes/register'));
 app.use(require('./routes/table'));
 app.use(require('./routes/clients'));
-app.use(require('./routes/providers'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    log.debug('Try catch 404 error');
+    log.error('404 error:' + req.path);
     next(404);
 });
 

@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('../libs/mongoose');
 var Provider = require('../models/providers').Provider;
+var ProviderRepository = require('../repositories/providerRepository');
 var Client = require('../models/clients').Client;
 var log = require('../libs/log')(module);
 var ObjectID = require('mongodb').ObjectID;
 var async = require('async');
 var checkAuth = require('../middleware/checkAuth');
+var _ = require('underscore');
 
 //mount routes
 router.post('/client/:clientId/addProvider', checkAuth, function (req, res, next) {
@@ -37,6 +39,41 @@ router.post('/client/:clientId/addProvider', checkAuth, function (req, res, next
             }
         });
     });
+});
+
+// Получение провайдеров по clientId
+router.post('/provider/get/:clientId/:limit?', checkAuth, function(req, res, next) {
+    try {
+        var clientId = new ObjectID(req.params.clientId);
+    } catch (e) {
+        log.error(e);
+        return next(404, 'Ошибка Id');
+    }
+    var limit = parseInt(req.params.limit);
+    limit = limit > 0 ? limit : 0;
+
+    ProviderRepository.providerListByClientId(clientId, 0, next, function(err, providers) {
+        if (err) {
+            next(500, 'Ошибка выборки провайдеров');
+        }
+
+        if (limit == 1) {
+            providers = providers.pop();
+        }
+
+        var providersJson = _.map(providers, function(provider) {
+            return {
+                id: provider.id,
+                name: provider.name,
+                city: provider.city
+            }
+        });
+
+        res.json({
+            success: true,
+            providers: providersJson
+        });
+    })
 });
 
 router.delete('/provider/:id', checkAuth, function (req, res, next) {

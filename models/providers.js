@@ -3,8 +3,9 @@
  * @type {mongoose|exports|module.exports}
  */
 
-var mongoose = require('../libs/mongoose'),
-    Schema = mongoose.Schema;
+var mongoose = require('../libs/mongoose');
+var Schema = mongoose.Schema;
+var log = require('../libs/log')(module);
 
 var Provider = new Schema({
     name: {
@@ -23,11 +24,11 @@ var Provider = new Schema({
     }
 });
 
-Provider.path('name').validate(function(v) {
-    return v.length > 0 && v.length< 70;
+Provider.path('name').validate(function (v) {
+    return v.length > 0 && v.length < 70;
 }, 'Имя поставщика должно быть от 0 до 70 символов');
 
-Provider.path('city').validate(function(v) {
+Provider.path('city').validate(function (v) {
     return v.length >= 0;
 }, 'Город должен быть заполнен');
 

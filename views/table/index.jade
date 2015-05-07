@@ -43,25 +43,29 @@ block content
                             = 'Добавить'
                     tr
                         td
-                            select(name='legalEntity')
+                            select.form-control(name='legalEntity')
                                 each val in legalEntity
                                     option(value=val.id)= val.name
                         td
-                            select(name='carrier')
+                            select.form-control(name='carrier')
                                 each carrier in carriers
                                     option(value=carrier.id)= carrier.name
-                        td -//-
-                        td= new Date()
                         td
-                            select#client(name='client')
+                            span.form-control -//-
+                        td
+                            span.form-control= new Date()
+                        td
+                            select.form-control#client(name='client')
                                 each client in clients
                                     option(value=client.id)= client.name
-                        td -//-
-                        td= new Date()
                         td
-                            select#provider
+                            span.form-control -//-
                         td
-                            select#cityProvider
+                            span.form-control= new Date()
+                        td
+                            select.form-control#provider
+                        td
+                            span.form-control#cityProvider
                         td
 
                     tr
