@@ -17,9 +17,9 @@ router.get('/table', checkAuth, function (req, res, next) {
             applications: function(callback) {
                 Application
                     .find()
-                    .populate('carriers')
-                    .populate('clients')
-                    .populate('providers')
+                    .populate('carrier')
+                    .populate('client')
+                    .populate('provider')
                     .exec(callback);
             },
             carriers: function (callback) {
