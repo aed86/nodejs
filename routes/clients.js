@@ -7,9 +7,10 @@ var log = require('../libs/log')(module);
 var ObjectID = require('mongodb').ObjectID;
 var async = require('async');
 var checkAuth = require('../middleware/checkAuth');
+var _ = require('underscore');
 
 //mount routes
-router.get('/clients', function (req, res) {
+router.get('/clients', checkAuth, function (req, res) {
     Client.find().sort({'created': 1}).exec(function (err, clientList) {
         if (err) throw (500);
 
@@ -19,7 +20,7 @@ router.get('/clients', function (req, res) {
     });
 });
 
-router.get('/addClient', function (req, res) {
+router.get('/addClient', checkAuth, function (req, res) {
     res.render('client/addClient', {
         title: 'Добавить клиента'
     });
@@ -64,6 +65,9 @@ router.post('/client/:id/edit', checkAuth, function (req, res) {
     });
 });
 
+/**
+ * Страница клиента
+ */
 router.get('/client/:id', checkAuth, function (req, res, next) {
     try {
         var id = new ObjectID(req.params.id);
@@ -72,33 +76,16 @@ router.get('/client/:id', checkAuth, function (req, res, next) {
         return next(404);
     }
 
-    async.waterfall([
-            // Получаем клиента по id
-            function (callback) {
-                Client.findById(id).exec(callback);
-            },
-            // Получить всех провайдеров
-            function (client, callback) {
-                if (!client) {
-                    log.error('Client with is ID:' + id);
-                    next('Клиент не найден');
-                } else {
-                    Provider.find({clientId: id}).sort({'created': 1}).exec(function (err, providers) {
-                        callback(null, client, providers);
-                    });
-                }
-            }
-        ],
-        function (err, client, providers) {
-            res.render('client/clientInfo', {
-                client: client,
-                providers: providers,
-                flashMessage: req.session.flashMessage.pop()
-            });
-        }
-    );
+    Client.findById(id).populate('providers').exec(function (err, client) {
+        res.render('client/clientInfo', {
+            client: client
+        });
+    });
 });
 
+/**
+ * Удаление клиента
+ */
 router.delete('/client/:id', checkAuth, function (req, res, next) {
     try {
         var id = new ObjectID(req.params.id);
@@ -109,6 +96,7 @@ router.delete('/client/:id', checkAuth, function (req, res, next) {
     }
 
     Client.findById(id, function (err, client) {
+        console.log(id, client);
         if (err) return next(err);
 
         if (!client) {
@@ -127,6 +115,56 @@ router.delete('/client/:id', checkAuth, function (req, res, next) {
                 });
             });
         }
+    });
+});
+
+/**
+ * Получение провайдеров по clientId
+ */
+router.post('/client/getProviders/:clientId/:limit?', checkAuth, function (req, res, next) {
+    try {
+        var clientId = new ObjectID(req.params.clientId);
+    } catch (e) {
+        log.error(e);
+        return next(404, 'Ошибка Id');
+    }
+
+    var limit = parseInt(req.params.limit);
+    limit = limit > 0 ? limit : 0;
+
+    Client.findById(clientId).populate('providers').exec(function (err, client) {
+        if (err) {
+            next(500, 'Ошибка выборки провайдеров');
+        }
+
+        if (!client) {
+            res.json({
+                message: "Данный клиент не найден.",
+                status: "error"
+            });
+            log.debug('Client with id ' + id + ' not found');
+        } else {
+
+            var providers = client.providers;
+
+            if (limit == 1) {
+                providers = providers.pop();
+            }
+
+            var providersJson = _.map(providers, function (provider) {
+                return {
+                    id: provider.id,
+                    name: provider.name,
+                    city: provider.city
+                }
+            });
+
+            res.json({
+                success: true,
+                providers: providersJson
+            });
+        }
+
     });
 });
 

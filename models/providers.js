@@ -16,7 +16,7 @@ var Provider = new Schema({
     },
     clientId: {
         type: String,
-        required: true
+        //required: true
     },
     created: {
         type: Date,

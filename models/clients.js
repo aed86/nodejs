@@ -17,6 +17,10 @@ var Client = new Schema({
         type: Number,
         default: 0
     },
+    providers:[{
+        type: Schema.ObjectId,
+        ref: 'Provider'
+    }],
     created: {
         type: Date,
         default: Date.now

@@ -17,16 +17,20 @@ router.get('/table', checkAuth, function (req, res, next) {
             applications: function(callback) {
                 Application
                     .find()
-                    .populate('carrier')
-                    .populate('client')
-                    .populate('provider')
+                    .populate('carriers')
+                    .populate('clients')
+                    .populate('providers')
                     .exec(callback);
             },
             carriers: function (callback) {
                 Carrier.find().sort({created: 1}).exec(callback);
             },
             clients: function (callback) {
-                Client.find().sort({created: 1}).exec(callback);
+                Client
+                    .find()
+                    .sort({created: 1})
+                    .populate('providers')
+                    .exec(callback);
             }
         },
         function (err, results) {
@@ -34,21 +38,30 @@ router.get('/table', checkAuth, function (req, res, next) {
                 next(err);
             }
 
-            console.log(results.applications);
+            console.log("Result: ", results.applications);
+            var providers = [],
+                city = '';
+
+            // Получаем значение полей "Перевозчики" и "Город" для первого клиента
+            if (results.clients[0] && results.clients[0].providers) {
+                providers = results.clients[0].providers;
+                city = providers[0].city
+            }
+
             res.render('table/index', {
                 applications: results.applications,
                 carriers: results.carriers,
-                clients: results.clients
+                clients: results.clients,
+                providers: providers,
+                city: city
             });
         });
 });
 
-//mount routes
+// Добавление новой записи
 router.post('/table/add', checkAuth, function (req, res, next) {
 
     var data = req.body;
-
-    //res.json(data);
 
     var isValid = data.legalEntity && data.carrier && data.client && data.provider;
     if (!isValid) {

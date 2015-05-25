@@ -37,17 +37,17 @@ block content
                                     //span= _app.carrier. // дата заявки
                                 td
                                     //Клиент
-                                    span= _app.client.name
+                                    //span= _app.client.name
                                 td
                                     //span= _app. // номер заявки клиена
                                 td
                                     //span= _app. // дата заявки
                                 td
                                     // поставщик
-                                    span= _app.provider.name
+                                    //span= _app.provider.name
                                 td
                                     // город поставщика
-                                    span= _app.provider.city
+                                    //span= _app.provider.city
                                 td
                                     span
                     else
@@ -82,8 +82,11 @@ block content
                             span.form-control= new Date()
                         td
                             select.form-control#provider(name='provider')
+                                each provider in providers
+                                    option(value=provider.id)= provider.name
                         td
                             span.form-control#cityProvider
+                                = city
                         td
 
                     tr

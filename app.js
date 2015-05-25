@@ -115,7 +115,6 @@ app.use(function (req, res, next) {
         ]);
     }
 
-    console.log(req.session.flashMessage);
     if (!req.session.flashMessage || !_.isArray(req.session.flashMessage)) {
         req.session.flashMessage = [];
     }

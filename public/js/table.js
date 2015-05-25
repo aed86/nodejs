@@ -8,8 +8,9 @@
                 this.updateProviderSelect();
             },
             getProviderByClientId: function (clientId) {
+
                 return $.ajax({
-                    url: '/provider/get/' + clientId,
+                    url: '/client/getProviders/' + clientId,
                     method: 'POST',
                     dataType: 'json',
                 });
@@ -19,6 +20,8 @@
                 var $providerSelect = $('#provider');
                 var $city = $('#cityProvider');
                 var clientId = $clientSelect.val();
+                if (!clientId) return;
+
                 this.getProviderByClientId(clientId).then(function(res) {
                     if (res.success) {
                         _providersBuf = res.providers;
@@ -48,7 +51,7 @@
 
     $(document).ready(function() {
         var table = new Table();
-        table.init();
+        //table.init();
 
         $(this).on('change', '#client', function() {
             table.updateProviderSelect();
