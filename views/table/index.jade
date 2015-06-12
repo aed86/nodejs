@@ -34,14 +34,14 @@ block content
                                 td
                                     //span= _app. // номер заявки перевозчика
                                 td
-                                    //span= _app.carrier. // дата заявки
+                                    input.form-control.datepicker(type='text' value=_app.providerDate)
                                 td
                                     //Клиент
                                     span= _app.client.name
                                 td
                                     //span= _app. // номер заявки клиена
                                 td
-                                    //span= _app. // дата заявки
+                                    input.form-control.datepicker(type='text' value=_app.clientDate)
                                 td
                                     // поставщик
                                     span= _app.provider.name
@@ -71,7 +71,7 @@ block content
                         td
                             span.form-control -//-
                         td
-                            span.form-control= new Date()
+                            input.form-control.datepicker(type="text" name='carrierDate' placeholder='Введите дату')
                         td
                             select.form-control#client(name='client')
                                 each client in clients
@@ -79,7 +79,7 @@ block content
                         td
                             span.form-control -//-
                         td
-                            span.form-control= new Date()
+                            input.form-control.datepicker(type="text" name='clientDate', placeholder='Введите дату')
                         td
                             select.form-control#provider(name='provider')
                                 each provider in providers

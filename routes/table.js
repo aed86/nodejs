@@ -96,7 +96,9 @@ router.post('/table/add', checkAuth, function (req, res, next) {
             var application = new Application({
                 legalEntity: data.legalEntity,
                 carrier: results.carrier.id,
+                carrierDate: data.carrierDate,
                 client: results.client.id,
+                clientDate: data.clientDate,
                 provider: results.provider.id
             });
 

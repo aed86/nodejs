@@ -5,14 +5,15 @@
 
         return {
             init: function () {
-                this.updateProviderSelect();
+                $('.datepicker').datepicker();
+                //this.updateProviderSelect();
             },
             getProviderByClientId: function (clientId) {
 
                 return $.ajax({
                     url: '/client/getProviders/' + clientId,
                     method: 'POST',
-                    dataType: 'json',
+                    dataType: 'json'
                 });
             },
             updateProviderSelect: function() {
@@ -51,7 +52,7 @@
 
     $(document).ready(function() {
         var table = new Table();
-        //table.init();
+        table.init();
 
         $(this).on('change', '#client', function() {
             table.updateProviderSelect();

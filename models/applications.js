@@ -19,9 +19,17 @@ var Applications = new Schema({
         type: Schema.ObjectId,
         ref: 'Client'
     },
+    clientDate: {
+        type: Date,
+        default: Date.now
+    },
     provider: {
         type: Schema.ObjectId,
         ref: 'Provider'
+    },
+    providerDate: {
+        type: Date,
+        default: Date.now
     },
     created: {
         type: Date,
