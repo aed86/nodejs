@@ -63,29 +63,33 @@
             },
             updateCarrierCount: function () {
                 var carrierId = $('#carrier').val();
-                $.ajax({
-                    url: '/carrier/info/' + carrierId,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success) {
-                            $("#carrierCount").html(parseInt(response.carrier.count) + 1);
+                if (carrierId) {
+                    $.ajax({
+                        url: '/carrier/info/' + carrierId,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                $("#carrierCount").html(parseInt(response.carrier.count) + 1);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             },
             updateClientCount: function () {
                 var clientId = $('#client').val();
-                $.ajax({
-                    url: '/client/info/' + clientId,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success) {
-                            $("#clientCount").html(parseInt(response.client.count) + 1);
+                if (clientId) {
+                    $.ajax({
+                        url: '/client/info/' + clientId,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                $("#clientCount").html(parseInt(response.client.count) + 1);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
     };
