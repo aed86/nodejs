@@ -32,14 +32,16 @@ block content
                                     // Имя перевозчика
                                     span= _app.carrier.name
                                 td
-                                    //span= _app. // номер заявки перевозчика
+                                    // номер заявки перевозчика
+                                    span= _app.carrierCount
                                 td
                                     input.form-control.datepicker(type='text' value=_app.carrierDate)
                                 td
                                     //Клиент
                                     span= _app.client.name
                                 td
-                                    //span= _app. // номер заявки клиена
+                                    // номер заявки клиена
+                                    span= _app.clientCount
                                 td
                                     input.form-control.datepicker(type='text' value=_app.clientDate)
                                 td
@@ -66,11 +68,12 @@ block content
                                 each val in legalEntity
                                     option(value=val.name)= val.name
                         td
-                            select.form-control(name='carrier')
+                            select.form-control#carrier(name='carrier')
                                 each carrier in carriers
                                     option(value=carrier.id)= carrier.name
                         td
-                            span.form-control -//-
+                            span.form-control#carrierCount
+                                = 0
                         td
                             input.form-control.datepicker(type="text" name='carrierDate' placeholder='Введите дату'
                             required='required')
@@ -79,7 +82,8 @@ block content
                                 each client in clients
                                     option(value=client.id)= client.name
                         td
-                            span.form-control -//-
+                            span.form-control#clientCount
+                                = clients[0].count
                         td
                             input.form-control.datepicker(type="text" name='clientDate', placeholder='Введите дату'
                             required='required')

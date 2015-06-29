@@ -17,6 +17,11 @@ var Client = new Schema({
         type: Number,
         default: 0
     },
+    // Количество заявок
+    count: {
+        type: Number,
+        default: 0
+    },
     providers:[{
         type: Schema.ObjectId,
         ref: 'Provider'

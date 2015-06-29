@@ -11,6 +11,7 @@ var Applications = new Schema({
         type: String,
         required: true
     },
+    //Перевозчик
     carrier: {
         type: Schema.ObjectId,
         ref: 'Carrier'
@@ -19,6 +20,11 @@ var Applications = new Schema({
         type: Date,
         default: Date.now
     },
+    //Номер заявки
+    carrierCount: {
+        type: Number,
+        default: 1
+    },
     client: {
         type: Schema.ObjectId,
         ref: 'Client'
@@ -26,6 +32,11 @@ var Applications = new Schema({
     clientDate: {
         type: Date,
         default: Date.now
+    },
+    //Номер заявки
+    clientCount: {
+        type: Number,
+        default: 1
     },
     provider: {
         type: Schema.ObjectId,

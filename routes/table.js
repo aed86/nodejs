@@ -14,7 +14,7 @@ var checkAuth = require('../middleware/checkAuth');
 router.get('/table', checkAuth, function (req, res, next) {
 
     async.parallel({
-            applications: function(callback) {
+            applications: function (callback) {
                 Application
                     .find()
                     .populate('carrier')
@@ -93,16 +93,51 @@ router.post('/table/add', checkAuth, function (req, res, next) {
                 next(err);
             }
 
+            var client = results.client;
+            var carrier = results.carrier;
+
             var application = new Application({
                 legalEntity: data.legalEntity,
-                carrier: results.carrier.id,
-                carrierDate: new Date(data.carrierDate.replace( /(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
-                client: results.client.id,
-                clientDate: new Date(data.clientDate.replace( /(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
+                carrier: carrier.id,
+                carrierDate: new Date(data.carrierDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
+                carrierCount: ++carrier.count,
+                client: client.id,
+                clientDate: new Date(data.clientDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
+                clientCount: ++client.count,
                 provider: results.provider.id
             });
 
-            application.save(function (err, application) {
+            async.parallel([
+                // Add new application
+                function (callback) {
+                    application.save(function (err, application) {
+                        if (err) {
+                            next(err);
+                        }
+                        callback(null, application);
+                    });
+                },
+                // Update Client count
+                function (callback) {
+                    //Client.count++;
+                    client.save(function (err, client) {
+                        if (err) {
+                            next(err);
+                        }
+                        callback(null, client);
+                    });
+                },
+                // Update Carrier count
+                function (callback) {
+                    //Carrier.count++;
+                    carrier.save(function (err, carrier) {
+                        if (err) {
+                            next(err);
+                        }
+                        callback(null, carrier);
+                    });
+                }
+            ], function (err, results) {
                 if (err) {
                     next(err);
                 }
@@ -111,7 +146,16 @@ router.post('/table/add', checkAuth, function (req, res, next) {
                 res.redirect('/table');
             });
 
-            console.log(results);
+            /* application.save(function (err, application) {
+             if (err) {
+             next(err);
+             }
+
+             req.session.flashMessage.push('Заявка добавлена');
+             res.redirect('/table');
+             });
+
+             console.log(results);*/
         });
     }
 });
@@ -125,7 +169,7 @@ router.delete('/table/:id', checkAuth, function (req, res, next) {
         return next(404);
     }
 
-    Application.findById(id, function(err, application) {
+    Application.findById(id, function (err, application) {
         if (err) {
             return next(err)
         }

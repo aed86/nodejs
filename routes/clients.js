@@ -168,4 +168,33 @@ router.post('/client/getProviders/:clientId/:limit?', checkAuth, function (req, 
     });
 });
 
+router.get('/client/info/:id', function (req, res, next) {
+    try {
+        var id = new ObjectID(req.params.id);
+    } catch (e) {
+        log.error(e.message);
+        return next(404);
+    }
+
+    Client.findById(id, function (err, client) {
+        if (err) return next(err);
+
+        if (!client) {
+            res.json({
+                message: "Запись не найдена",
+                success: true
+            });
+            log.debug('Client with id ' + id + ' not found');
+        } else {
+            res.json({
+                success: true,
+                client: {
+                    name: client.name,
+                    count: client.count
+                }
+            });
+        }
+    });
+});
+
 module.exports = router;
