@@ -38,7 +38,7 @@ router.get('/table', checkAuth, function (req, res, next) {
                 next(err);
             }
 
-            console.log("Result: ", results.applications);
+            //console.log("Result: ", results.applications);
             var providers = [],
                 city = '';
 
@@ -96,9 +96,9 @@ router.post('/table/add', checkAuth, function (req, res, next) {
             var application = new Application({
                 legalEntity: data.legalEntity,
                 carrier: results.carrier.id,
-                carrierDate: data.carrierDate,
+                carrierDate: new Date(data.carrierDate.replace( /(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
                 client: results.client.id,
-                clientDate: data.clientDate,
+                clientDate: new Date(data.clientDate.replace( /(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
                 provider: results.provider.id
             });
 
@@ -114,6 +114,39 @@ router.post('/table/add', checkAuth, function (req, res, next) {
             console.log(results);
         });
     }
+});
+
+router.delete('/table/:id', checkAuth, function (req, res, next) {
+    try {
+        var id = new ObjectID(req.params.id);
+        log.debug(id);
+    } catch (e) {
+        log.error(e.message);
+        return next(404);
+    }
+
+    Application.findById(id, function(err, application) {
+        if (err) {
+            return next(err)
+        }
+
+        if (application) {
+            application.remove(function (err) {
+                if (err) throw err;
+
+                res.json({
+                    success: true,
+                    message: "Заявка удалена"
+                });
+            });
+        } else {
+            // Запись не найдена
+            res.json({
+                success: false,
+                message: "Запись не найдена"
+            });
+        }
+    });
 });
 
 module.exports = router;

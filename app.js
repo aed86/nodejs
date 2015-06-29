@@ -124,6 +124,7 @@ app.use(function (req, res, next) {
 
 // Флеш сообщения
 app.use(function(req, res, next) {
+    app.locals.flashMessage = '';
     if (req.session.flashMessage.length > 0) {
         app.locals.flashMessage = req.session.flashMessage.pop();
     }

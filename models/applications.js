@@ -15,6 +15,10 @@ var Applications = new Schema({
         type: Schema.ObjectId,
         ref: 'Carrier'
     },
+    carrierDate: {
+        type: Date,
+        default: Date.now
+    },
     client: {
         type: Schema.ObjectId,
         ref: 'Client'

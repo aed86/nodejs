@@ -5,7 +5,20 @@
 
         return {
             init: function () {
-                $('.datepicker').datepicker();
+                $('.datepicker').each(function() {
+                    var $this = $(this);
+                    var currentDate = $(this).val();
+                    if (currentDate) {
+                        var date = $.datepicker.formatDate("dd.mm.yy",  new Date(currentDate));
+                        $this
+                            .datepicker({
+                                dateFormat: $.datepicker.regional['ru'].dateFormat
+                            })
+                            .datepicker('setDate', date);
+                    } else {
+                        $('.datepicker').datepicker();
+                    }
+                });
                 //this.updateProviderSelect();
             },
             getProviderByClientId: function (clientId) {
@@ -60,6 +73,29 @@
 
         $(this).on('change', '#provider', function() {
             table.updateProviderCity(this.value);
-        })
+        });
+
+        $(this).on('click', '.remove', function() {
+            var $tr = $(this).closest('tr');
+            var id = $tr.attr('id');
+
+            $.ajax({
+                url: "table/" + id,
+                method: "DELETE",
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        // TODO: smth
+                        $tr.remove();
+                        showFlashMessage(response.message);
+                        //window.location.href = "/table";
+                    }
+                }
+            });
+
+            return false;
+        });
+
+
     });
 })(jQuery);
