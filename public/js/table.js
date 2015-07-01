@@ -63,9 +63,10 @@
             },
             updateCarrierCount: function () {
                 var carrierId = $('#carrier').val();
+                var legalEntity = $('#legalEntity').val();
                 if (carrierId) {
                     $.ajax({
-                        url: '/carrier/info/' + carrierId,
+                        url: '/carrier/info/' + carrierId + '/' + legalEntity,
                         method: 'GET',
                         dataType: 'json',
                         success: function (response) {
@@ -78,9 +79,10 @@
             },
             updateClientCount: function () {
                 var clientId = $('#client').val();
+                var legalEntity = $('#legalEntity').val();
                 if (clientId) {
                     $.ajax({
-                        url: '/client/info/' + clientId,
+                        url: '/client/info/' + clientId + '/' + legalEntity,
                         method: 'GET',
                         dataType: 'json',
                         success: function (response) {
@@ -109,6 +111,11 @@
 
         $(this).on('change', '#carrier', function () {
             table.updateCarrierCount();
+        });
+
+        $(this).on('change', '#legalEntity', function () {
+            table.updateCarrierCount();
+            table.updateClientCount();
         });
 
         $(this).on('click', '.remove', function () {

@@ -18,3 +18,12 @@ npm install
 node bin/www
 
 Основные параметры вынесены в config.json
+
+Запуск nodejs в фоновом режиме
+nohup nodejs /home/aed/nodejs/bin/www > /dev/null  2>&1 &
+или
+forever start bin/www
+
+Запус mongod в фоновом режиме
+sudo mongod --fork --dbpath /var/lib/mongodb/ --smallfiles --logpath /var/log/mongodb.log --logappend
+

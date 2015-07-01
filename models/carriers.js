@@ -19,11 +19,19 @@ var schema = new Schema({
         type: String,
         required: true
     },
-    // Количество заявок
-    count: {
-        type: Number,
-        default: 0
-    },
+    applications: [
+        {
+            legalEntity: String,
+            number: {
+                type: Number,
+                default: 1
+            },
+            application: {
+                type: Schema.ObjectId,
+                ref: 'Application'
+            }
+        }
+    ],
     created: {
         type: Date,
         default: Date.now

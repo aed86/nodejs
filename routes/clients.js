@@ -96,7 +96,6 @@ router.delete('/client/:id', checkAuth, function (req, res, next) {
     }
 
     Client.findById(id, function (err, client) {
-        console.log(id, client);
         if (err) return next(err);
 
         if (!client) {
@@ -168,13 +167,15 @@ router.post('/client/getProviders/:clientId/:limit?', checkAuth, function (req, 
     });
 });
 
-router.get('/client/info/:id', function (req, res, next) {
+router.get('/client/info/:id/:legalEntity', function (req, res, next) {
     try {
         var id = new ObjectID(req.params.id);
     } catch (e) {
         log.error(e.message);
         return next(404);
     }
+
+    var legalEntityId = req.params.legalEntity || req.app.locals.legalEntity[0].id;
 
     Client.findById(id, function (err, client) {
         if (err) return next(err);
@@ -186,11 +187,25 @@ router.get('/client/info/:id', function (req, res, next) {
             });
             log.debug('Client with id ' + id + ' not found');
         } else {
+            // Фильтруем список по ЮрЛицу
+            var elm = _.filter(client.applications, function(item) {
+                return item.legalEntity == legalEntityId;
+            });
+
+            // Получаем максимальный номер заявки
+            var maxNum = _.max(elm, function(item){
+                return item.number;
+            }).number;
+
+            if (!maxNum) {
+                maxNum = 0;
+            }
+
             res.json({
                 success: true,
                 client: {
                     name: client.name,
-                    count: client.count
+                    count: maxNum
                 }
             });
         }

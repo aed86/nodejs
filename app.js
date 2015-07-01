@@ -61,28 +61,28 @@ app.use(function (req, res, next) {
             url: '/',
             title: 'Home',
             active: '/home' == req.path
-        },
-        {
-            url: '/table',
-            title: 'Таблица',
-            active: '/table' == req.path
-        },
-        {
-            url: '/clients',
-            title: 'Клиенты',
-            active: '/clients' == req.path
-        },
-        {
-            url: '/claims',
-            title: 'Заявки',
-            active: '/claims' == req.path
-        },
-        {
-            url: '/carriers',
-            title: 'Перевозчики',
-            active: '/carriers' == req.path
         }
     ];
+
+    if (req.user) {
+        app.locals.topMenu = _.union(app.locals.topMenu, [
+            {
+                url: '/table',
+                title: 'Таблица заявок',
+                active: '/table' == req.path
+            },
+            {
+                url: '/clients',
+                title: 'Клиенты',
+                active: '/clients' == req.path
+            },
+            {
+                url: '/carriers',
+                title: 'Перевозчики',
+                active: '/carriers' == req.path
+            }
+        ])
+    }
 
     app.locals.legalEntity = [
         {
@@ -94,6 +94,14 @@ app.use(function (req, res, next) {
             name: 'ИнтерЛогистик'
         }
     ];
+
+    /** Возвращает название ЮрЛица по его id */
+    app.locals.legalEntityName = function(id) {
+        var legalEnt = _.find(app.locals.legalEntity, function(le) {
+            return le.id == id
+        });
+        return legalEnt.name;
+    };
 
     app.locals.rightMenu = [];
     if (req.user) {
@@ -123,7 +131,7 @@ app.use(function (req, res, next) {
 });
 
 // Флеш сообщения
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     app.locals.flashMessage = '';
     if (req.session.flashMessage.length > 0) {
         app.locals.flashMessage = req.session.flashMessage.pop();
@@ -134,7 +142,6 @@ app.use(function(req, res, next) {
 
 app.use(require('./routes/home'));
 app.use(require('./routes/providers'));
-app.use(require('./routes/claims'));
 app.use(require('./routes/carriers'));
 app.use(require('./routes/login'));
 app.use(require('./routes/logout'));

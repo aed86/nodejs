@@ -52,4 +52,9 @@ var Applications = new Schema({
     }
 });
 
+//Applications.pre('remove', function (next) {
+//    // do stuff
+//    next();
+//});
+
 exports.Applications = mongoose.model('Applications', Applications);

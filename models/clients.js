@@ -13,15 +13,19 @@ var Client = new Schema({
     description: {
         type: String,
     },
-    claimsCount: {
-        type: Number,
-        default: 0
-    },
-    // Количество заявок
-    count: {
-        type: Number,
-        default: 0
-    },
+    applications: [
+        {
+            legalEntity: String,
+            number: {
+                type: Number,
+                default: 1
+            },
+            application: {
+                type: Schema.ObjectId,
+                ref: 'Application'
+            }
+        }
+    ],
     providers:[{
         type: Schema.ObjectId,
         ref: 'Provider'

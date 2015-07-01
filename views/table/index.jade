@@ -27,7 +27,7 @@ block content
 
                                 td
                                     //Юр лицо
-                                    span=_app.legalEntity
+                                    span=legalEntityName(_app.legalEntity)
                                 td
                                     // Имя перевозчика
                                     span= _app.carrier.name
@@ -64,9 +64,9 @@ block content
                             = 'Добавить'
                     tr
                         td
-                            select.form-control(name='legalEntity')
+                            select.form-control(name='legalEntity')#legalEntity
                                 each val in legalEntity
-                                    option(value=val.name)= val.name
+                                    option(value=val.id)= val.name
                         td
                             select.form-control#carrier(name='carrier')
                                 each carrier in carriers

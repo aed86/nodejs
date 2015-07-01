@@ -9,6 +9,8 @@ var Application = require('../models/applications').Applications;
 var ObjectID = require('mongodb').ObjectID;
 var async = require('async');
 var checkAuth = require('../middleware/checkAuth');
+var applicationRepository = require('../repositories/applicationRepository');
+var _ = require('underscore');
 
 //mount routes
 router.get('/table', checkAuth, function (req, res, next) {
@@ -96,66 +98,72 @@ router.post('/table/add', checkAuth, function (req, res, next) {
             var client = results.client;
             var carrier = results.carrier;
 
-            var application = new Application({
-                legalEntity: data.legalEntity,
-                carrier: carrier.id,
-                carrierDate: new Date(data.carrierDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
-                carrierCount: ++carrier.count,
-                client: client.id,
-                clientDate: new Date(data.clientDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
-                clientCount: ++client.count,
-                provider: results.provider.id
-            });
-
-            async.parallel([
-                // Add new application
-                function (callback) {
-                    application.save(function (err, application) {
-                        if (err) {
-                            next(err);
-                        }
-                        callback(null, application);
-                    });
+            async.parallel({
+                appClientsCount: function (callback) {
+                    applicationRepository.applicationCount({
+                        legalEntity: data.legalEntity,
+                        type: 'client',
+                        id: client.id
+                    }).exec(callback);
                 },
-                // Update Client count
-                function (callback) {
-                    //Client.count++;
-                    client.save(function (err, client) {
-                        if (err) {
-                            next(err);
-                        }
-                        callback(null, client);
-                    });
-                },
-                // Update Carrier count
-                function (callback) {
-                    //Carrier.count++;
-                    carrier.save(function (err, carrier) {
-                        if (err) {
-                            next(err);
-                        }
-                        callback(null, carrier);
-                    });
+                appCarriersCount: function (callback) {
+                    applicationRepository.applicationCount({
+                        legalEntity: data.legalEntity,
+                        type: 'carrier',
+                        id: carrier.id
+                    }).exec(callback);
                 }
-            ], function (err, results) {
+            }, function (err, results2) {
                 if (err) {
                     next(err);
                 }
 
+                // Сохраняем заявку
+                var application = new Application({
+                    legalEntity: data.legalEntity,
+                    carrier: carrier.id,
+                    carrierDate: new Date(data.carrierDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
+                    carrierCount: results2.appCarriersCount + 1, // увеличиваем счетчик
+                    client: client.id,
+                    clientDate: new Date(data.clientDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, "$2/$1/$3")),
+                    clientCount: results2.appClientsCount + 1, // Номер заявки
+                    provider: results.provider.id
+                });
+                application.save(function (err, application) {
+                    if (err) {
+                        next(err);
+                    }
+
+                    // обновляем счетчик клиента
+                    client.applications.push({
+                        legalEntity: application.legalEntity,
+                        number: results2.appClientsCount + 1,
+                        application: application
+                    });
+                    client.save(function (err, client) {
+                        if (err) {
+                            next(err);
+                        }
+                    });
+
+                    carrier.applications.push({
+                        legalEntity: application.legalEntity,
+                        number: results2.appCarriersCount + 1,
+                        application: application
+                    });
+                    // обновляем счетчик перевозчика
+                    carrier.save(function (err, carrier) {
+                        if (err) {
+                            next(err);
+                        }
+
+                    });
+                });
+
+
                 req.session.flashMessage.push('Заявка добавлена');
                 res.redirect('/table');
             });
-
-            /* application.save(function (err, application) {
-             if (err) {
-             next(err);
-             }
-
-             req.session.flashMessage.push('Заявка добавлена');
-             res.redirect('/table');
-             });
-
-             console.log(results);*/
         });
     }
 });
@@ -169,28 +177,49 @@ router.delete('/table/:id', checkAuth, function (req, res, next) {
         return next(404);
     }
 
-    Application.findById(id, function (err, application) {
-        if (err) {
-            return next(err)
-        }
+    Application.findById(id)
+        .populate('client')
+        .populate('carrier')
+        .exec(function (err, application) {
+            if (err) {
+                return next(err)
+            }
 
-        if (application) {
-            application.remove(function (err) {
-                if (err) throw err;
+            if (application) {
+                application.remove(function (err) {
+                    if (err) throw err;
 
-                res.json({
-                    success: true,
-                    message: "Заявка удалена"
+                    var client = application.client;
+                    client.applications = _.filter(client.applications, function (a) {
+                        return a.application.toString() != id.toString();
+                    });
+
+                    client.save(function(err) {
+                       if (err) next(err)
+                    });
+
+                    var carrier = application.carrier;
+                    carrier.applications = _.filter(carrier.applications, function (a) {
+                        return a.application.toString() != id.toString();
+                    });
+
+                    carrier.save(function(err) {
+                        if (err) next(err);
+                    });
+
+                    res.json({
+                        success: true,
+                        message: "Заявка удалена"
+                    });
                 });
-            });
-        } else {
-            // Запись не найдена
-            res.json({
-                success: false,
-                message: "Запись не найдена"
-            });
-        }
-    });
+            } else {
+                // Запись не найдена
+                res.json({
+                    success: false,
+                    message: "Запись не найдена"
+                });
+            }
+        });
 });
 
 module.exports = router;
