@@ -22,7 +22,7 @@ block content
                         td
                             a(href="/client/"+ val.id)= val.name
                         td= val.claimsCount
-                        td= val.created
+                        td= moment(val.created).format(defaultDateFormat)
                         td
                             a.btn.btn-primary.btn-xs.removeItem&attributes({'data-id': val._id.toString(),
                                 'data-item': 'client'}) Удалить

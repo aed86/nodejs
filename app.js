@@ -55,7 +55,8 @@ app.use(require('./middleware/loadUser'));
 // set view locals
 app.use(function (req, res, next) {
     app.locals.route = req.url;
-
+    app.locals.moment = require('moment');
+    app.locals.defaultDateFormat = 'DD.MM.YYYY';
     app.locals.topMenu = [
         {
             url: '/',

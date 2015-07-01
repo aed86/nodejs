@@ -32,7 +32,7 @@ block content
                                 td
                                     =provider.city
                                 td
-                                    =provider.created
+                                    = moment(provider.created).format(defaultDateFormat)
                                 td
                                     a.btn.btn-primary.btn-xs.removeItem&attributes({'data-id': provider.id.toString(),
                                         'data-item': 'provider'}) Удалить
